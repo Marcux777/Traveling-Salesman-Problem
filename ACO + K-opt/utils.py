@@ -10,11 +10,11 @@ import matplotlib.pyplot as plt
 def calculate_distances(x, y):
     """
     Calcula a matriz de distâncias euclidiana entre todos os pares de cidades.
-    
+
     Args:
         x (list): Lista de coordenadas x das cidades.
         y (list): Lista de coordenadas y das cidades.
-        
+
     Returns:
         numpy.ndarray: Matriz de distâncias entre as cidades.
     """
@@ -34,10 +34,10 @@ def calculate_distances(x, y):
 def read_tsp_file(file_path):
     """
     Lê um arquivo TSP para obter as coordenadas das cidades.
-    
+
     Args:
         file_path (str): Caminho para o arquivo TSP.
-        
+
     Returns:
         tuple: Uma tupla contendo o número de cidades e as listas de coordenadas x e y.
     """
@@ -56,22 +56,22 @@ def read_tsp_file(file_path):
 def find_tsp_file_path(filename, possible_folders=None):
     """
     Localiza o caminho completo para um arquivo TSP.
-    
+
     Args:
         filename (str): Nome do arquivo TSP.
         possible_folders (list, optional): Lista de pastas possíveis para procurar o arquivo.
-        
+
     Returns:
         str: Caminho completo para o arquivo TSP.
     """
     if possible_folders is None:
         possible_folders = ["../EntradasTSP/", "EntradasTSP/"]
-    
+
     for folder in possible_folders:
         path = os.path.join(folder, filename)
         if os.path.exists(path):
             return path
-    
+
     # Se não encontrar, retorna o primeiro caminho possível
     return os.path.join(possible_folders[0], filename)
 
@@ -79,10 +79,10 @@ def find_tsp_file_path(filename, possible_folders=None):
 def get_available_tsp_files(folder_path):
     """
     Obtém uma lista de arquivos TSP disponíveis.
-    
+
     Args:
         folder_path (str): Caminho para a pasta com arquivos TSP.
-        
+
     Returns:
         list: Lista de nomes de arquivos TSP disponíveis.
     """
@@ -96,7 +96,7 @@ def get_available_tsp_files(folder_path):
 def plot_tsp_solution(solution, x, y, cost, title=None):
     """
     Plota a solução do Problema do Caixeiro Viajante.
-    
+
     Args:
         solution (list): Lista representando a rota solução.
         x (list): Lista de coordenadas x das cidades.
@@ -128,8 +128,9 @@ def plot_tsp_solution(solution, x, y, cost, title=None):
     if title:
         plt.title(title)
     else:
-        plt.title(f'Solução do Problema do Caixeiro Viajante - Custo: {cost:.2f}')
-    
+        plt.title(
+            f'Solução do Problema do Caixeiro Viajante - Custo: {cost:.2f}')
+
     plt.xlabel('Coordenada X')
     plt.ylabel('Coordenada Y')
     plt.grid(True, alpha=0.3)

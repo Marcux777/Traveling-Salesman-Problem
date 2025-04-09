@@ -18,7 +18,12 @@ A implementação do Algoritmo Genético inclui:
 
 ### Estrutura de Classes
 - **Individual**: Representa uma solução (rota) para o TSP
+  - Métodos para cálculo de fitness, crossover, mutação e 2-opt
+  - Suporte à criação de caminhos aleatórios e validação
 - **GeneticOptimizer**: Gerencia a evolução da população
+  - Suporte à evolução sequencial e paralela
+  - Monitoramento de convergência
+  - Estratégias adaptativas para seleção e reprodução
 
 ### Principais Características
 - **Seleção Elitista**: Preserva os melhores indivíduos entre gerações
@@ -29,6 +34,14 @@ A implementação do Algoritmo Genético inclui:
 - **Heurística 2-opt**: Melhoria local das rotas encontradas
 - **Lista Tabu**: Evita ciclos durante a busca
 - **Processamento Paralelo**: Acelera o cálculo de fitness e a evolução
+  - Implementação multiprocessing com pool de processos
+  - Otimização de tamanho de chunks para balanceamento de carga
+  - Escalabilidade automática com base no número de CPUs disponíveis
+
+### Visualização e Análise
+- **Gráficos de Convergência**: Visualização da evolução do fitness ao longo das gerações
+- **Visualização de Rotas**: Plotagem das melhores rotas encontradas
+- **Métricas de Desempenho**: Tempo de execução e qualidade da solução
 
 ### Otimização Bayesiana de Hiperparâmetros
 
@@ -73,17 +86,46 @@ python Genetic_Algorithm/main.py --modo padrao --arquivo Qatar.txt --geracoes 10
 
 A implementação de ACO inclui:
 
+### Estrutura de Classes
+- **AntColonyOptimization**: Implementação base do algoritmo ACO
+  - Inicialização adaptativa de feromônios
+  - Seleção de caminhos baseada em probabilidade
+  - Atualização global e local de feromônios
+- **MaxMinAntSystem**: Extensão com estratégia Max-Min para evitar estagnação
+  - Limites dinâmicos para concentração de feromônios
+  - Atualização seletiva com base na qualidade da solução
+- **AcoRunner**: Gerencia a execução e visualização dos resultados
+
 ### Principais Características
 - **Regra de atualização de feromônios**: Deposição e evaporação de feromônios
+  - Atualização baseada na qualidade do caminho completo
+  - Estratégia de evaporação para favorecer exploração
 - **Heurística da visibilidade**: Utiliza o inverso da distância para guiar as formigas
+  - Balanceamento dinâmico entre exploração e intensificação
+  - Parâmetros α e β para controlar a influência relativa
 - **MMAS (Max-Min Ant System)**: Variante que limita a quantidade de feromônio para evitar convergência prematura
+  - Limite superior e inferior adaptativo para concentração de feromônios
+  - Reinicialização inteligente do sistema quando estagnado
 - **Processamento Paralelo**: Executa múltiplas instâncias em paralelo para encontrar melhores soluções
+  - Implementação eficiente para explorar diferentes regiões do espaço de busca
+  - Compartilhamento de informações entre instâncias paralelas
 
 ### Melhoria K-opt
 A implementação inclui uma melhoria K-opt para otimizar localmente as melhores rotas encontradas, incluindo:
 - **2-opt**: Troca cruzada de duas arestas
+  - Implementação eficiente com verificação de ganho
+  - Estratégia de first-improvement para maior velocidade
 - **3-opt**: Troca cruzada de três arestas
+  - Avaliação completa de todas as combinações possíveis
+  - Filtro inteligente para reduzir o espaço de busca
 - **K-opt (K>3)**: Implementação simplificada para valores maiores de K
+  - Aplicação iterativa para melhorias incrementais
+  - Suporte a estratégias de busca local avançadas
+
+### Visualização e Análise
+- **Gráficos de Convergência**: Evolução da qualidade da solução ao longo das iterações
+- **Mapa de Feromônios**: Visualização da concentração de feromônios nas arestas
+- **Plotagem de Rotas**: Visualização das melhores rotas encontradas
 
 ### Otimização Bayesiana de Hiperparâmetros para ACO
 
@@ -94,6 +136,8 @@ Assim como no GA, foi implementada a **Otimização Bayesiana** para o ACO, perm
 - **Alpha (α)**: Importância dos feromônios na decisão de rota (0.1-2.0)
 - **Beta (β)**: Importância da heurística (distância) na decisão de rota (0.1-5.0)
 - **Rho (ρ)**: Taxa de evaporação dos feromônios (0.1-0.99)
+- **Q**: Fator de deposição de feromônio (0.1-10.0)
+- **Estratégia de inicialização**: Diferentes métodos para inicializar os níveis de feromônio
 
 #### Como Usar a Otimização Bayesiana para ACO
 ```
@@ -122,6 +166,16 @@ O processo de otimização:
 python "ACO + K-opt/ACO_main.py" --modo padrao --arquivo Djibouti.txt --num_formigas 30 --alpha 0.8 --beta 0.8 --rho 0.9 --iteracoes 100 --k_opt 2
 ```
 
+## Comparação entre Algoritmos
+
+O projeto permite uma comparação direta entre os diferentes algoritmos implementados (GA e ACO), considerando:
+
+- **Qualidade da solução**: Distância total do melhor caminho encontrado
+- **Velocidade de convergência**: Número de iterações necessárias para encontrar boas soluções
+- **Tempo de execução**: Eficiência computacional de cada abordagem
+- **Robustez**: Consistência dos resultados em diferentes execuções
+- **Escalabilidade**: Desempenho em problemas de diferentes tamanhos
+
 ## Conjunto de Dados
 
 O repositório inclui diversos conjuntos de dados do TSP, variando de problemas pequenos (como Djibouti com 38 cidades) a problemas maiores. Alguns exemplos:
@@ -129,6 +183,8 @@ O repositório inclui diversos conjuntos de dados do TSP, variando de problemas 
 - Qatar (194 cidades)
 - Argentina (9 cidades)
 - China (71 cidades)
+- Japão (124 cidades)
+- Tanzânia (127 cidades)
 - E outros mais...
 
 ## Requisitos
@@ -137,6 +193,16 @@ O repositório inclui diversos conjuntos de dados do TSP, variando de problemas 
 - NumPy
 - Matplotlib
 - scikit-optimize (para otimização bayesiana)
+- Pandas (para análise de dados)
+- tqdm (para barras de progresso)
+
+## Instalação
+
+Para instalar todas as dependências necessárias:
+
+```
+pip install numpy matplotlib scikit-optimize pandas tqdm
+```
 
 ## Resultados
 
@@ -146,3 +212,11 @@ Os algoritmos foram testados em vários conjuntos de dados e comparados em termo
 - Convergência
 
 A otimização bayesiana melhorou significativamente o desempenho tanto do Algoritmo Genético quanto do ACO, encontrando automaticamente configurações de hiperparâmetros que resultam em melhores soluções com menos gerações ou iterações.
+
+## Trabalhos Futuros
+
+- Implementação de algoritmos híbridos combinando GA e ACO
+- Paralelização mais avançada usando GPU
+- Interface gráfica para visualização em tempo real
+- Suporte a problemas TSP com restrições adicionais
+- Implementação de outras metaheurísticas como Particle Swarm Optimization (PSO) e Simulated Annealing

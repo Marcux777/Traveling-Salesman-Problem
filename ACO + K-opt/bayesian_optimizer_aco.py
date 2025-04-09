@@ -77,10 +77,10 @@ class BayesianOptimizerACO:
     def _run_aco_with_params(self, params: List) -> Tuple[List[int], float]:
         """
         Executa o ACO com um conjunto específico de parâmetros.
-        
+
         Args:
             params: Lista de valores para os hiperparâmetros
-            
+
         Returns:
             Tupla contendo a melhor solução e seu custo
         """
@@ -105,20 +105,20 @@ class BayesianOptimizerACO:
     def _apply_k_opt(self, solution: List[int], cost: float) -> Tuple[List[int], float]:
         """
         Aplica a heurística K-Opt em uma solução.
-        
+
         Args:
             solution: Solução a ser melhorada
             cost: Custo da solução original
-            
+
         Returns:
             Tupla contendo a solução melhorada e seu custo
         """
         if not self.use_k_opt:
             return solution, cost
-            
+
         k_opt = K_Opt(self.graph)
         improved_solution, improved_cost = k_opt.k_opt(solution, self.k_value)
-        
+
         return improved_solution, improved_cost
 
     def objective_function(self, params: List) -> float:
@@ -141,8 +141,9 @@ class BayesianOptimizerACO:
 
         # Aplica K-Opt na melhor solução encontrada, se solicitado
         if self.use_k_opt:
-            improved_solution, improved_cost = self._apply_k_opt(best_solution, best_cost)
-            
+            improved_solution, improved_cost = self._apply_k_opt(
+                best_solution, best_cost)
+
             if improved_cost < best_cost:
                 best_solution = improved_solution
                 best_cost = improved_cost
@@ -160,7 +161,7 @@ class BayesianOptimizerACO:
     def _print_params(self, params: List):
         """
         Imprime os parâmetros atuais sendo testados.
-        
+
         Args:
             params: Lista de valores para os hiperparâmetros
         """
@@ -174,7 +175,7 @@ class BayesianOptimizerACO:
     def _update_best_params(self, params: List, cost: float):
         """
         Atualiza os melhores parâmetros se o custo atual for melhor.
-        
+
         Args:
             params: Lista de valores para os hiperparâmetros
             cost: Custo da solução atual
@@ -199,7 +200,8 @@ class BayesianOptimizerACO:
         Returns:
             Dicionário com os melhores hiperparâmetros encontrados
         """
-        print(f"Iniciando otimização bayesiana com {self.n_calls} chamadas ({self.n_random_starts} pontos aleatórios iniciais)")
+        print(
+            f"Iniciando otimização bayesiana com {self.n_calls} chamadas ({self.n_random_starts} pontos aleatórios iniciais)")
         print(f"Número de cidades: {len(self.x)}")
         print(f"Número de iterações por execução: {self.max_iterations}")
 
@@ -215,7 +217,8 @@ class BayesianOptimizerACO:
         # Atualiza os melhores parâmetros se não foram definidos durante a otimização
         if self.best_params is None:
             self._update_best_params(
-                [self.results.x[0], self.results.x[1], self.results.x[2], self.results.x[3]], 
+                [self.results.x[0], self.results.x[1],
+                    self.results.x[2], self.results.x[3]],
                 self.results.fun
             )
 
@@ -230,8 +233,10 @@ class BayesianOptimizerACO:
         print("\nOtimização bayesiana concluída!")
         print(f"Melhores hiperparâmetros encontrados:")
         print(f"  - Número de formigas: {self.best_params['num_ants']}")
-        print(f"  - Alpha (importância do feromônio): {self.best_params['alpha']:.4f}")
-        print(f"  - Beta (importância da heurística): {self.best_params['beta']:.4f}")
+        print(
+            f"  - Alpha (importância do feromônio): {self.best_params['alpha']:.4f}")
+        print(
+            f"  - Beta (importância da heurística): {self.best_params['beta']:.4f}")
         print(f"  - Rho (taxa de evaporação): {self.best_params['rho']:.4f}")
         print(f"  - Melhor custo: {self.best_cost:.4f}")
 
@@ -240,7 +245,8 @@ class BayesianOptimizerACO:
         Plota os resultados da otimização bayesiana.
         """
         if self.results is None:
-            print("Nenhum resultado de otimização disponível. Execute optimize() primeiro.")
+            print(
+                "Nenhum resultado de otimização disponível. Execute optimize() primeiro.")
             return
 
         # Plota a convergência
@@ -252,9 +258,11 @@ class BayesianOptimizerACO:
 
         # Plota os objetivos para cada parâmetro
         fig, ax = plt.subplots(2, 2, figsize=(15, 10))
-        plot_objective(self.results, dimensions=['num_ants', 'alpha'], ax=ax[0, 0])
+        plot_objective(self.results, dimensions=[
+                       'num_ants', 'alpha'], ax=ax[0, 0])
         plot_objective(self.results, dimensions=['beta', 'rho'], ax=ax[0, 1])
-        plot_objective(self.results, dimensions=['num_ants', 'beta'], ax=ax[1, 0])
+        plot_objective(self.results, dimensions=[
+                       'num_ants', 'beta'], ax=ax[1, 0])
         plot_objective(self.results, dimensions=['alpha', 'rho'], ax=ax[1, 1])
 
         plt.tight_layout()
@@ -290,8 +298,9 @@ class BayesianOptimizerACO:
         # Aplica K-Opt na melhor solução encontrada, se solicitado
         if self.use_k_opt:
             print("Aplicando K-Opt na melhor solução...")
-            improved_solution, improved_cost = self._apply_k_opt(best_solution, best_cost)
-            
+            improved_solution, improved_cost = self._apply_k_opt(
+                best_solution, best_cost)
+
             if improved_cost < best_cost:
                 best_solution = improved_solution
                 best_cost = improved_cost
@@ -312,8 +321,8 @@ class BayesianOptimizerACO:
         return best_solution, best_cost
 
 
-def run_bayesian_optimization(graph, x, y, n_calls=20, n_random_starts=5, 
-                             max_iterations=50, start_city=0, k_value=2):
+def run_bayesian_optimization(graph, x, y, n_calls=20, n_random_starts=5,
+                              max_iterations=50, start_city=0, k_value=2):
     """
     Executa otimização bayesiana para encontrar os melhores hiperparâmetros para ACO.
 
