@@ -3,19 +3,32 @@ import numpy as np
 
 
 class K_Opt:
+    """
+    Implementa o algoritmo K-Opt para otimização local de rotas no Problema do Caixeiro Viajante.
+    
+    K-Opt é uma heurística que melhora uma solução existente substituindo k arestas
+    por k outras arestas para encontrar um caminho mais curto.
+    """
+
     def __init__(self, graph):
+        """
+        Inicializa a classe K_Opt.
+        
+        Args:
+            graph (numpy.ndarray): Matriz de distâncias entre as cidades.
+        """
         self.graph = graph
 
     def generate_k_opt_moves(self, solution, k):
         """
-        Generates all possible k-opt moves for a given solution.
+        Gera todos os possíveis movimentos k-opt para uma solução dada.
 
-        Parameters:
-            solution (list): The current solution.
-            k (int): The number of edges to be swapped.
+        Args:
+            solution (list): A solução atual.
+            k (int): Número de arestas a serem trocadas.
 
         Returns:
-            list: A list of tuples, where each tuple represents a k-opt move.
+            numpy.ndarray: Uma lista de tuplas, onde cada tupla representa um movimento k-opt.
         """
         n = len(solution)
         if k > n:
@@ -25,15 +38,15 @@ class K_Opt:
 
     def reconnect_edges(self, solution, move, k):
         """
-        Reconnects edges in a given solution based on a move and k value.
+        Reconecta arestas em uma solução com base em um movimento e valor de k.
+        
         Args:
-            solution (list): The current solution.
-            move (list): The move to be applied.
-            k (int): The value of k.
+            solution (list): A solução atual.
+            move (list): O movimento a ser aplicado.
+            k (int): O valor de k (número de arestas a serem trocadas).
+            
         Returns:
-            list: A list of new solutions after reconnecting edges.
-        Raises:
-            None.
+            list: Uma lista de novas soluções após reconectar as arestas.
         """
         if k == 2:
             return self._reconnect_2_opt(solution, move)
@@ -43,10 +56,30 @@ class K_Opt:
             return self._reconnect_k_opt(solution, move, k)
 
     def _reconnect_2_opt(self, solution, move):
+        """
+        Implementa a reconexão de arestas para 2-opt.
+        
+        Args:
+            solution (list): A solução atual.
+            move (list): O movimento a ser aplicado.
+            
+        Returns:
+            list: Uma lista contendo a nova solução.
+        """
         i, j = sorted(move)
         return [solution[:i] + list(reversed(solution[i:j])) + solution[j:]]
 
     def _reconnect_3_opt(self, solution, move):
+        """
+        Implementa a reconexão de arestas para 3-opt.
+        
+        Args:
+            solution (list): A solução atual.
+            move (list): O movimento a ser aplicado.
+            
+        Returns:
+            list: Uma lista de 7 possíveis reconexões.
+        """
         i, j, l = sorted(move)
         a, b, c = solution[:i], solution[i:j], solution[j:l]
         d = solution[l:]
@@ -61,15 +94,24 @@ class K_Opt:
         ]
 
     def _reconnect_k_opt(self, solution, move, k):
-        # Simplificação para k > 3 usando rotações
+        """
+        Implementa a reconexão de arestas para k > 3.
+        
+        Args:
+            solution (list): A solução atual.
+            move (list): O movimento a ser aplicado.
+            k (int): O valor de k.
+            
+        Returns:
+            list: Uma lista contendo a melhor solução encontrada.
+        """
         n = len(solution)
         move = sorted(move) + [move[0] + n]  # Fecha o ciclo
         best_solution = solution
         best_cost = self.calculate_cost(solution)
 
         for i in range(1, k - 1):
-            new_solution = solution[:move[i]] + solution[move[i]
-                :move[i + 1]][::-1] + solution[move[i + 1]:]
+            new_solution = solution[:move[i]] + solution[move[i]:move[i + 1]][::-1] + solution[move[i + 1]:]
             new_cost = self.calculate_cost(new_solution)
             if new_cost < best_cost:
                 best_solution = new_solution
@@ -78,35 +120,51 @@ class K_Opt:
 
     def calculate_cost(self, solution):
         """
-        Calculates the cost of a given solution in the TSP problem.
+        Calcula o custo de uma solução para o problema do TSP.
 
-        Parameters:
-        - solution (list): A list representing a solution to the TSP problem.
+        Args:
+            solution (list): Lista representando uma solução para o TSP.
 
         Returns:
-        - cost (float): The cost of the given solution.
+            float: O custo da solução.
         """
-        cost = np.sum(self.graph[solution[:-1], solution[1:]]
-                      ) + self.graph[solution[-1], solution[0]]
+        cost = np.sum(self.graph[solution[:-1], solution[1:]]) + self.graph[solution[-1], solution[0]]
         return cost
 
     def k_opt(self, solution, k):
         """
-        Applies the k-opt heuristic to improve a given solution for the Traveling Salesman Problem (TSP).
-        Parameters:
-            solution (list): The initial solution to be improved.
-            k (int): The number of edges to be reconnected in each move.
+        Aplica a heurística k-opt para melhorar uma solução para o Problema do Caixeiro Viajante.
+        
+        Args:
+            solution (list): A solução inicial a ser melhorada.
+            k (int): Número de arestas a serem reconectadas em cada movimento.
+            
         Returns:
-            tuple: A tuple containing the best improved solution and its corresponding cost.
+            tuple: Uma tupla contendo a melhor solução melhorada e seu custo correspondente.
         """
         best_solution = solution.copy()
         best_cost = self.calculate_cost(solution)
-
-        for move in self.generate_k_opt_moves(solution, k):
-            for new_solution in self.reconnect_edges(solution, move, k):
-                new_cost = self.calculate_cost(new_solution)
-                if new_cost < best_cost:
-                    best_solution = new_solution
-                    best_cost = new_cost
+        improvement_found = True
+        iteration = 0
+        max_iterations = min(100, len(solution) ** 2)  # Limite para problemas grandes
+        
+        while improvement_found and iteration < max_iterations:
+            improvement_found = False
+            iteration += 1
+            
+            for move in self.generate_k_opt_moves(solution, k):
+                for new_solution in self.reconnect_edges(solution, move, k):
+                    new_cost = self.calculate_cost(new_solution)
+                    if new_cost < best_cost:
+                        best_solution = new_solution
+                        best_cost = new_cost
+                        improvement_found = True
+                        break
+                
+                if improvement_found:
+                    break
+            
+            if improvement_found:
+                solution = best_solution.copy()
 
         return best_solution, best_cost

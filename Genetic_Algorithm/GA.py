@@ -2,6 +2,18 @@ import random
 import math
 import matplotlib.pyplot as plt
 import multiprocessing as mp
+import numpy as np
+import logging
+
+logger = logging.getLogger("GeneticAlgorithm")
+logger.setLevel(logging.INFO)
+if not logger.handlers:
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.INFO)
+    formatter = logging.Formatter(
+        '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    ch.setFormatter(formatter)
+    logger.addHandler(ch)
 
 '''
 GA: Class to represent an individual in the GA.
@@ -12,14 +24,15 @@ class GA:
     best_fitnesses = []
 
     def __init__(self, gene, price, tabu_list=[]):
-        self.gene = gene
-        self.price = price
+        self.gene = np.array(gene, dtype=np.int32)
+        self.price = np.array(price, dtype=np.float64)
         self.fit = self.calculate_fitness()
-        self.tabu_list = tabu_list
+        self.tabu_list = [] if tabu_list is None else tabu_list
 
     '''
     create_path(n): Creates a random path of length n.
     '''
+    @staticmethod
     def create_path(n):
         path = list(range(1, n + 1))
         random.shuffle(path)
@@ -30,11 +43,9 @@ class GA:
     '''
 
     def calculate_fitness(self):
-        total_dist = self.price[self.gene[-1] - 1][self.gene[0] - 1]
-        total_dist += sum(self.price[self.gene[i] - 1][self.gene[i + 1] - 1]
-                          for i in range(len(self.gene) - 1))
-
-        return total_dist
+        gene_array = self.gene - 1
+        edges = np.column_stack((gene_array, np.roll(gene_array, -1)))
+        return np.sum(self.price[edges[:, 0], edges[:, 1]])
 
     '''
     crossover(other): Crosses the current individual with another individual to create a new individual.
@@ -107,7 +118,7 @@ class GA:
     mutation(rate=0.01): Applies mutation to the individual with a specified rate.
     '''
 
-    def mutation(self, rate=0.01):
+    def mutation(self, rate=0.01, two_opt_rate=0.1):
         if random.random() < rate:
             # Select k random swaps to apply
             k = int(len(self.gene)*0.005)
@@ -122,7 +133,8 @@ class GA:
             # Only recalculate fitness if any swaps were made
             if k > 0:
                 self.fit = self.calculate_fitness()
-        self.two_opt()
+        if (random.random() < two_opt_rate):
+            self.two_opt()
 
     def inversion_mutation(self, rate=0.01):
         if random.random() < rate:
@@ -134,14 +146,20 @@ class GA:
     '''
     read_file(file_path): Reads the TSP data from a file.
     '''
+    @staticmethod
     def read_file(file_path):
-        with open(file_path, 'r') as file:
-            n = int(file.readline().strip())
-            x, y = [float('inf')]*n, [float('inf')]*n
-            for line in file:
-                l, c1, c2 = map(float, line.split())
-                l = int(l) - 1
-                x[l], y[l] = c1, c2
+        with open(file_path, 'r') as f:
+            n = int(f.readline().strip())
+        # Lê os dados a partir da segunda linha
+        data = np.loadtxt(file_path, skiprows=1)
+        # Cria vetores para as coordenadas
+        x = np.empty(n, dtype=float)
+        y = np.empty(n, dtype=float)
+        # Preenche os arrays com base no índice (assumindo que a primeira coluna indica o índice da cidade)
+        for row in data:
+            idx, c1, c2 = row
+            x[int(idx)-1] = c1
+            y[int(idx)-1] = c2
         return n, x, y
 
     @staticmethod
@@ -156,7 +174,7 @@ class GA:
         plt.show()
 
     @classmethod
-    def calculate_fitness_parallel(individual):
+    def calculate_fitness_parallel(cls, individual):
         total_dist = sum(individual.price[individual.gene[i] - 1]
                          [individual.gene[i + 1] - 1] for i in range(len(individual.gene) - 1))
         return total_dist
@@ -169,8 +187,9 @@ class GA:
         for generation in range(generations):
             population.sort(key=lambda x: x.fit)
 
-            print("Generation: ", generation, " Best path:",
-                  population[0].gene, "\n Cost: ", round(population[0].fit), "\n")
+            if generation % 10 == 0:
+                logger.info("Generation: %d Best path: %s\n Cost: %d\n",
+                            generation, population[0].gene, round(population[0].fit))
 
             new = []
 
@@ -189,14 +208,17 @@ class GA:
 
     @classmethod
     def evolve_parallel(cls, population, generations=100):
+        # Determine o número ideal de processos
+        num_processes = min(mp.cpu_count(), 8)
+
         for generation in range(generations):
             population.sort(key=lambda x: x.fit)
 
-            print("Generation: ", generation, " Best path:",
-                  population[0].gene, "\n Cost: ", round(population[0].fit), "\n")
+            if generation % 10 == 0:
+                logger.info("Generation: %d Best path: %s\n Cost: %d\n",
+                            generation, population[0].gene, round(population[0].fit))
 
             new = []
-
             best = population[:int(0.1 * len(population))]
 
             while len(new) < len(population) - len(best):
@@ -205,12 +227,16 @@ class GA:
                 child.mutation()
                 new.append(child)
 
-            with mp.Pool() as pool:
-                fitnesses = pool.map(cls.calculate_fitness_parallel, new)
+            # Usar um tamanho de chunk adequado para balancear a carga
+            chunk_size = max(1, len(new) // (num_processes * 4))
+            with mp.Pool(num_processes) as pool:
+                fitnesses = pool.map(
+                    cls.calculate_fitness_parallel, new, chunksize=chunk_size)
 
-            for new, fitness in zip(new, fitnesses):
-                new.fit = fitness
+            for individual, fitness in zip(new, fitnesses):
+                individual.fit = fitness
 
             population = best + new
             cls.best_fitnesses.append(population[0].fit)
+
         return population, generation
