@@ -1,5 +1,9 @@
-from itertools import combinations
+"""
+Módulo que implementa o algoritmo K-Opt para otimização local de rotas.
+"""
+
 import numpy as np
+from itertools import combinations
 
 
 class K_Opt:
@@ -186,13 +190,15 @@ class K_Opt:
 
         return cost
 
-    def k_opt(self, solution, k):
+    def k_opt(self, solution, k, max_iterations=None):
         """
         Aplica a heurística k-opt para melhorar uma solução para o Problema do Caixeiro Viajante.
 
         Args:
             solution (list): A solução inicial a ser melhorada.
             k (int): Número de arestas a serem reconectadas em cada movimento.
+            max_iterations (int, optional): Número máximo de iterações. Se None,
+                                          será calculado com base no tamanho da solução.
 
         Returns:
             tuple: Uma tupla contendo a melhor solução melhorada e seu custo correspondente.
@@ -201,8 +207,10 @@ class K_Opt:
         best_cost = self.calculate_cost(solution)
         improvement_found = True
         iteration = 0
+
         # Limite para problemas grandes
-        max_iterations = min(100, len(solution) ** 2)
+        if max_iterations is None:
+            max_iterations = min(100, len(solution) ** 2)
 
         while improvement_found and iteration < max_iterations:
             improvement_found = False

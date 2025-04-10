@@ -5,9 +5,9 @@ Módulo principal para executar o Algoritmo de Colônia de Formigas para o Probl
 import argparse
 import os
 
-from utils import calculate_distances, read_tsp_file, find_tsp_file_path
-from aco_runner import run_standard_aco
-from bayesian_optimizer_aco import run_bayesian_optimization
+from ACO_Algorithm.utils.tsp_utils import calculate_distances, read_tsp_file, find_tsp_file_path
+from ACO_Algorithm.aco.runner import run_standard_aco
+from ACO_Algorithm.optimization.bayesian_optimizer import run_bayesian_optimization
 
 
 def parse_arguments():

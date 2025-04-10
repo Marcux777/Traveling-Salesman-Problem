@@ -10,7 +10,7 @@ Este repositório contém implementações de diferentes algoritmos para resolve
 O projeto está organizado nos seguintes diretórios:
 - `EntradasTSP/`: Contém arquivos de dados de teste para o TSP
 - `Genetic_Algorithm/`: Implementação do Algoritmo Genético
-- `ACO + K-opt/`: Implementação da Otimização por Colônia de Formigas com K-opt
+- `ACO_Algorithm/`: Implementação modularizada da Otimização por Colônia de Formigas
 
 ## Algoritmo Genético
 
@@ -84,87 +84,83 @@ python Genetic_Algorithm/main.py --modo padrao --arquivo Qatar.txt --geracoes 10
 
 ## Otimização por Colônia de Formigas (ACO)
 
-A implementação de ACO inclui:
+A implementação de ACO foi modularizada e organizada em diferentes componentes para maior manutenibilidade e extensibilidade.
 
-### Estrutura de Classes
-- **AntColonyOptimization**: Implementação base do algoritmo ACO
-  - Inicialização adaptativa de feromônios
-  - Seleção de caminhos baseada em probabilidade
-  - Atualização global e local de feromônios
-- **MaxMinAntSystem**: Extensão com estratégia Max-Min para evitar estagnação
-  - Limites dinâmicos para concentração de feromônios
-  - Atualização seletiva com base na qualidade da solução
-- **AcoRunner**: Gerencia a execução e visualização dos resultados
+### Estrutura do Módulo ACO
 
-### Principais Características
-- **Regra de atualização de feromônios**: Deposição e evaporação de feromônios
-  - Atualização baseada na qualidade do caminho completo
-  - Estratégia de evaporação para favorecer exploração
-- **Heurística da visibilidade**: Utiliza o inverso da distância para guiar as formigas
-  - Balanceamento dinâmico entre exploração e intensificação
-  - Parâmetros α e β para controlar a influência relativa
-- **MMAS (Max-Min Ant System)**: Variante que limita a quantidade de feromônio para evitar convergência prematura
-  - Limite superior e inferior adaptativo para concentração de feromônios
-  - Reinicialização inteligente do sistema quando estagnado
-- **Processamento Paralelo**: Executa múltiplas instâncias em paralelo para encontrar melhores soluções
-  - Implementação eficiente para explorar diferentes regiões do espaço de busca
-  - Compartilhamento de informações entre instâncias paralelas
-
-### Melhoria K-opt
-A implementação inclui uma melhoria K-opt para otimizar localmente as melhores rotas encontradas, incluindo:
-- **2-opt**: Troca cruzada de duas arestas
-  - Implementação eficiente com verificação de ganho
-  - Estratégia de first-improvement para maior velocidade
-- **3-opt**: Troca cruzada de três arestas
-  - Avaliação completa de todas as combinações possíveis
-  - Filtro inteligente para reduzir o espaço de busca
-- **K-opt (K>3)**: Implementação simplificada para valores maiores de K
-  - Aplicação iterativa para melhorias incrementais
-  - Suporte a estratégias de busca local avançadas
-
-### Visualização e Análise
-- **Gráficos de Convergência**: Evolução da qualidade da solução ao longo das iterações
-- **Mapa de Feromônios**: Visualização da concentração de feromônios nas arestas
-- **Plotagem de Rotas**: Visualização das melhores rotas encontradas
-
-### Otimização Bayesiana de Hiperparâmetros para ACO
-
-Assim como no GA, foi implementada a **Otimização Bayesiana** para o ACO, permitindo encontrar automaticamente os melhores valores para os principais hiperparâmetros:
-
-#### Hiperparâmetros Otimizados para ACO
-- **Número de formigas**: Quantidade de formigas na colônia (5-50)
-- **Alpha (α)**: Importância dos feromônios na decisão de rota (0.1-2.0)
-- **Beta (β)**: Importância da heurística (distância) na decisão de rota (0.1-5.0)
-- **Rho (ρ)**: Taxa de evaporação dos feromônios (0.1-0.99)
-- **Q**: Fator de deposição de feromônio (0.1-10.0)
-- **Estratégia de inicialização**: Diferentes métodos para inicializar os níveis de feromônio
-
-#### Como Usar a Otimização Bayesiana para ACO
 ```
-python "ACO + K-opt/ACO_main.py" --modo bayesiano --arquivo Qatar.txt --chamadas 20 --inicios 5 --iteracoes_bo 50 --k_opt 2
+ACO_Algorithm/
+│
+├── __init__.py                 # Torna o pacote importável
+├── main.py                     # Arquivo principal de execução com interface CLI
+│
+├── aco/                        # Módulo para algoritmos ACO
+│   ├── __init__.py             # Torna o subpacote importável
+│   ├── colony.py               # Implementação principal do algoritmo ACO
+│   ├── mmas.py                 # Implementação do Max-Min Ant System
+│   └── runner.py               # Funções para execução do ACO (padrão e paralela)
+│
+├── optimization/               # Módulo para algoritmos de otimização
+│   ├── __init__.py             # Torna o subpacote importável
+│   ├── k_opt.py                # Implementação do algoritmo K-Opt
+│   └── bayesian_optimizer.py   # Otimização bayesiana de hiperparâmetros
+│
+└── utils/                      # Módulo de utilidades
+    ├── __init__.py             # Torna o subpacote importável
+    ├── tsp_utils.py            # Funções para manipulação de arquivos TSP e cálculos
+    └── visualization.py        # Funções para visualização de soluções
 ```
 
-Onde:
-- `--modo bayesiano`: Ativa a otimização bayesiana
-- `--arquivo Qatar.txt`: Especifica o arquivo de entrada
-- `--chamadas 20`: Define o número total de chamadas da otimização
-- `--inicios 5`: Define o número de pontos iniciais aleatórios
-- `--iteracoes_bo 50`: Define o número de iterações de ACO para cada teste
-- `--k_opt 2`: Define o valor de k para o algoritmo K-opt
+### Principais Componentes
 
-#### Resultados da Otimização
-O processo de otimização:
-1. Testa várias configurações de parâmetros, aprendendo a cada iteração
-2. Exibe os melhores hiperparâmetros encontrados
-3. Plota gráficos de convergência e da influência de cada parâmetro
-4. Executa o ACO com os parâmetros otimizados por 200 iterações
-5. Aplica K-opt na melhor solução encontrada
-6. Exibe a melhor rota e seu custo, junto com uma visualização gráfica
+#### Algoritmos ACO
+- **ACO (Ant Colony Optimization)**: Implementação base do algoritmo
+  - Gerenciamento de feromônios e heurísticas
+  - Construção probabilística de soluções
+  - Atualização de feromônios baseada na qualidade das soluções
+- **MMAS (Max-Min Ant System)**: Variante aprimorada que limita os valores de feromônio
+  - Prevenção de estagnação com limites dinâmicos
+  - Reinicialização de feromônios quando necessário
+  - Melhor balanceamento entre exploração e intensificação
 
-### Como Executar o ACO Padrão
+#### Otimização
+- **K-Opt**: Implementação do algoritmo K-Opt para melhoria local
+  - Suporte para diferentes valores de K (2-opt, 3-opt, etc.)
+  - Estratégias de busca local para refinamento de soluções
+- **Otimização Bayesiana**: Ajuste automático de hiperparâmetros
+  - Modelagem probabilística do espaço de parâmetros
+  - Exploração inteligente de configurações promissoras
+
+#### Utilitários
+- **Funções para TSP**: Leitura de arquivos, cálculo de distâncias
+- **Visualização**: Plotagem de rotas, gráficos de convergência
+
+### Como Executar o ACO
+
+A nova estrutura modularizada permite uma execução mais flexível e organizada:
+
+#### Execução Padrão
 ```
-python "ACO + K-opt/ACO_main.py" --modo padrao --arquivo Qatar.txt --num_formigas 30 --alpha 0.8 --beta 0.8 --rho 0.9 --iteracoes 100 --k_opt 2
+python -m ACO_Algorithm.main --modo padrao --arquivo Qatar.txt --num_formigas 30 --alpha 0.8 --beta 0.8 --rho 0.9 --iteracoes 100 --k_opt 2
 ```
+
+#### Execução com Otimização Bayesiana
+```
+python -m ACO_Algorithm.main --modo bayesiano --arquivo Qatar.txt --chamadas 20 --inicios 5 --iteracoes_bo 50 --k_opt 2
+```
+
+Parâmetros disponíveis:
+- `--modo`: 'padrao' ou 'bayesiano'
+- `--arquivo`: Nome do arquivo TSP (ex: Qatar.txt, Djibouti.txt)
+- `--num_formigas`: Número de formigas (modo padrão)
+- `--alpha`: Importância do feromônio (modo padrão)
+- `--beta`: Importância da heurística (modo padrão)
+- `--rho`: Taxa de evaporação (modo padrão)
+- `--iteracoes`: Número de iterações (modo padrão)
+- `--chamadas`: Número de chamadas para otimização bayesiana
+- `--inicios`: Número de pontos aleatórios iniciais
+- `--iteracoes_bo`: Número de iterações por teste na otimização bayesiana
+- `--k_opt`: Valor de k para a otimização K-Opt
 
 ## Comparação entre Algoritmos
 

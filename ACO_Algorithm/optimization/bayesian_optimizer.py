@@ -10,9 +10,9 @@ from skopt import gp_minimize
 from skopt.space import Real, Integer
 from skopt.plots import plot_convergence, plot_objective
 
-from Ant_Colony_Optimization import ACO
-from K_Opt import K_Opt
-from utils import plot_tsp_solution
+from ACO_Algorithm.aco.colony import ACO
+from ACO_Algorithm.optimization.k_opt import K_Opt
+from ACO_Algorithm.utils.visualization import plot_tsp_solution
 
 
 class BayesianOptimizerACO:

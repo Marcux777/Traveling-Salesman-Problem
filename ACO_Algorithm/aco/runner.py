@@ -5,9 +5,9 @@ Módulo que implementa funções para execução paralela do Algoritmo de Colôn
 import time
 from multiprocessing import Pool, cpu_count
 
-from Ant_Colony_Optimization import ACO
-from K_Opt import K_Opt
-from utils import plot_tsp_solution
+from ACO_Algorithm.aco.colony import ACO
+from ACO_Algorithm.optimization.k_opt import K_Opt
+from ACO_Algorithm.utils.visualization import plot_tsp_solution
 
 
 def run_aco_single(params):

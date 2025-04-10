@@ -4,7 +4,7 @@ Algoritmo de Otimização por Colônia de Formigas (ACO) para o Problema do Caix
 """
 
 import numpy as np
-from Ant_Colony_Optimization import ACO
+from ACO_Algorithm.aco.colony import ACO
 
 
 class MMAS(ACO):
