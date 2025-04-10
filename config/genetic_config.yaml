@@ -1,0 +1,32 @@
+# Configuração para o Algoritmo Genético (GA)
+
+# Parâmetros gerais
+general:
+  input_file: "EntradasTSP/Qatar.txt"  # Arquivo de entrada para o problema TSP
+  num_generations: 1000                 # Número de gerações
+
+# Parâmetros do algoritmo genético
+genetic:
+  population_size: 100                  # Tamanho da população
+  elite_size: 0.1                       # Proporção de elite (0-1)
+  mutation_rate: 0.01                   # Taxa de mutação (0-1)
+  crossover_rate: 0.8                   # Taxa de crossover (0-1)
+  use_parallel: true                    # Usar processamento paralelo
+  tournament_size: 5                    # Tamanho do torneio para seleção
+  use_two_opt: true                     # Aplicar otimização 2-opt nas soluções
+
+# Parâmetros para visualização
+visualization:
+  show_plots: true                      # Mostrar gráficos
+  save_plots: true                      # Salvar gráficos em arquivos
+  output_dir: "resultados/ga"           # Diretório para salvar resultados
+  show_progress: true                   # Mostrar barra de progresso durante execução
+  interactive: true                     # Usar visualizações interativas
+  update_interval: 10                   # Intervalo de atualização (em gerações) para visualização interativa
+
+# Parâmetros para otimização bayesiana
+bayesian_optimization:
+  enabled: false                        # Usar otimização bayesiana
+  n_calls: 20                           # Número de chamadas para otimização
+  n_random_starts: 5                    # Número de pontos iniciais aleatórios
+  verbose: true                         # Mostrar informações detalhadas

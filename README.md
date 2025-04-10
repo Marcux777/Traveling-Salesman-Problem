@@ -11,6 +11,209 @@ O projeto está organizado nos seguintes diretórios:
 - `EntradasTSP/`: Contém arquivos de dados de teste para o TSP
 - `Genetic_Algorithm/`: Implementação do Algoritmo Genético
 - `ACO_Algorithm/`: Implementação modularizada da Otimização por Colônia de Formigas
+- `config/`: Arquivos de configuração para os algoritmos
+- `resultados/`: Pasta onde serão salvos os resultados das execuções
+- `tests/`: Testes unitários para os algoritmos
+
+## Guia de Comandos Completo
+
+### Comandos do Algoritmo Genético
+
+O algoritmo genético pode ser executado através do script principal em `Genetic_Algorithm/main.py`. Os comandos disponíveis são:
+
+#### Execução Padrão (Modo Padrão)
+```bash
+python Genetic_Algorithm/main.py --modo padrao --arquivo <ARQUIVO> [opções]
+```
+
+**Argumentos obrigatórios:**
+- `--modo padrao`: Define a execução no modo padrão
+- `--arquivo <ARQUIVO>`: Nome do arquivo de entrada (deve estar em EntradasTSP/)
+
+**Opções adicionais:**
+- `--geracoes <NUM>`: Número de gerações (default: 1000)
+- `--tam_populacao <NUM>`: Tamanho da população (default: 100)
+- `--tam_elite <FLOAT>`: Proporção de elite (0-1) (default: 0.1)
+- `--taxa_mutacao <FLOAT>`: Taxa de mutação (0-1) (default: 0.01)
+- `--taxa_crossover <FLOAT>`: Taxa de crossover (0-1) (default: 0.8)
+- `--use_2opt`: Aplicar otimização 2-opt (flag)
+- `--interactive`: Usar visualização interativa durante a execução (flag)
+- `--animation`: Criar animação da evolução da solução (flag)
+
+**Exemplo:**
+```bash
+python Genetic_Algorithm/main.py --modo padrao --arquivo Qatar.txt --geracoes 500 --tam_populacao 150 --tam_elite 0.15 --taxa_mutacao 0.02 --taxa_crossover 0.75 --use_2opt --interactive
+```
+
+#### Execução com Otimização Bayesiana (Modo Bayesiano)
+```bash
+python Genetic_Algorithm/main.py --modo bayesiano --arquivo <ARQUIVO> [opções]
+```
+
+**Argumentos obrigatórios:**
+- `--modo bayesiano`: Define a execução no modo de otimização bayesiana
+- `--arquivo <ARQUIVO>`: Nome do arquivo de entrada (deve estar em EntradasTSP/)
+
+**Opções adicionais:**
+- `--geracoes <NUM>`: Número de gerações para a execução final (default: 1000)
+- `--chamadas <NUM>`: Número total de chamadas da otimização (default: 20)
+- `--inicios <NUM>`: Número de pontos iniciais aleatórios (default: 5)
+- `--geracoes_bo <NUM>`: Número de gerações para cada execução de teste (default: 200)
+- `--use_2opt`: Aplicar otimização 2-opt (flag)
+- `--interactive`: Usar visualização interativa durante a execução (flag)
+- `--animation`: Criar animação da evolução da solução (flag)
+
+**Exemplo:**
+```bash
+python Genetic_Algorithm/main.py --modo bayesiano --arquivo Qatar.txt --chamadas 30 --inicios 8 --geracoes_bo 150 --geracoes 800 --use_2opt
+```
+
+#### Execução com Arquivo de Configuração (Modo Config)
+```bash
+python Genetic_Algorithm/main.py --modo config --config_file <CAMINHO>
+```
+
+**Argumentos obrigatórios:**
+- `--modo config`: Define a execução usando arquivo de configuração
+- `--config_file <CAMINHO>`: Caminho para o arquivo de configuração YAML
+
+**Exemplo:**
+```bash
+python Genetic_Algorithm/main.py --modo config --config_file config/genetic_config.yaml
+```
+
+### Comandos do Algoritmo ACO (Otimização por Colônia de Formigas)
+
+O algoritmo ACO pode ser executado através do script principal em `ACO_Algorithm/main.py`. Os comandos disponíveis são:
+
+#### Execução Padrão (Modo Padrão)
+```bash
+python -m ACO_Algorithm.main --modo padrao --arquivo <ARQUIVO> [opções]
+```
+
+**Argumentos obrigatórios:**
+- `--modo padrao`: Define a execução no modo padrão
+- `--arquivo <ARQUIVO>`: Nome do arquivo de entrada (deve estar em EntradasTSP/)
+
+**Opções adicionais:**
+- `--num_formigas <NUM>`: Número de formigas (default: 30)
+- `--alpha <FLOAT>`: Importância do feromônio (default: 0.8)
+- `--beta <FLOAT>`: Importância da heurística (default: 0.8)
+- `--rho <FLOAT>`: Taxa de evaporação (default: 0.9)
+- `--iteracoes <NUM>`: Número máximo de iterações (default: 100)
+- `--k_opt <NUM>`: Valor de k para K-opt (2 = 2-opt, 3 = 3-opt, etc.) (default: 2)
+- `--use_mmas`: Usar Max-Min Ant System em vez do ACO padrão (flag)
+- `--interactive`: Usar visualização interativa durante a execução (flag)
+- `--animation`: Criar animação da evolução da solução (flag)
+
+**Exemplo:**
+```bash
+python -m ACO_Algorithm.main --modo padrao --arquivo Qatar.txt --num_formigas 50 --alpha 1.0 --beta 2.0 --rho 0.8 --iteracoes 200 --k_opt 3 --use_mmas --interactive
+```
+
+#### Execução com Otimização Bayesiana (Modo Bayesiano)
+```bash
+python -m ACO_Algorithm.main --modo bayesiano --arquivo <ARQUIVO> [opções]
+```
+
+**Argumentos obrigatórios:**
+- `--modo bayesiano`: Define a execução no modo de otimização bayesiana
+- `--arquivo <ARQUIVO>`: Nome do arquivo de entrada (deve estar em EntradasTSP/)
+
+**Opções adicionais:**
+- `--chamadas <NUM>`: Número de chamadas para otimização bayesiana (default: 20)
+- `--inicios <NUM>`: Número de pontos iniciais aleatórios (default: 5)
+- `--iteracoes_bo <NUM>`: Número de iterações por teste na otimização bayesiana (default: 50)
+- `--k_opt <NUM>`: Valor de k para K-opt (default: 2)
+
+**Exemplo:**
+```bash
+python -m ACO_Algorithm.main --modo bayesiano --arquivo Qatar.txt --chamadas 30 --inicios 10 --iteracoes_bo 100 --k_opt 2
+```
+
+#### Execução com Arquivo de Configuração (Modo Config)
+```bash
+python -m ACO_Algorithm.main --modo config --config_file <CAMINHO>
+```
+
+**Argumentos obrigatórios:**
+- `--modo config`: Define a execução usando arquivo de configuração
+- `--config_file <CAMINHO>`: Caminho para o arquivo de configuração YAML
+
+**Exemplo:**
+```bash
+python -m ACO_Algorithm.main --modo config --config_file config/aco_config.yaml
+```
+
+### Arquivos de Configuração YAML
+
+Para facilitar a execução dos algoritmos, você pode criar arquivos de configuração YAML personalizados.
+
+#### Exemplo de Configuração para Algoritmo Genético (genetic_config.yaml):
+```yaml
+general:
+  input_file: "Qatar.txt"
+  num_generations: 1000
+
+ga:
+  population_size: 100
+  elite_size: 0.1
+  mutation_rate: 0.01
+  crossover_rate: 0.8
+
+two_opt:
+  enabled: true
+
+visualization:
+  interactive: true
+  save_animation: true
+  update_interval: 10
+```
+
+#### Exemplo de Configuração para ACO (aco_config.yaml):
+```yaml
+general:
+  input_file: "Qatar.txt"
+  max_iterations: 100
+
+aco:
+  num_ants: 30
+  alpha: 0.8
+  beta: 0.8
+  rho: 0.9
+
+mmas:
+  enabled: true
+  p_best: 0.05
+  stagnation_limit: 10
+
+k_opt:
+  enabled: true
+  k_value: 2
+
+visualization:
+  interactive: true
+  save_animation: true
+  update_interval: 5
+```
+
+### Executando Testes Unitários
+
+Para executar os testes unitários do projeto:
+
+```bash
+python -m unittest discover tests/unit
+```
+
+Para executar testes específicos:
+
+```bash
+# Testes para o Algoritmo Genético
+python -m unittest tests.unit.test_genetic
+
+# Testes para o ACO
+python -m unittest tests.unit.test_aco
+```
 
 ## Algoritmo Genético
 

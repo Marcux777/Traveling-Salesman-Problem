@@ -1,0 +1,43 @@
+# Configuração para o Algoritmo de Otimização por Colônia de Formigas (ACO)
+
+# Parâmetros gerais
+general:
+  input_file: "EntradasTSP/Qatar.txt"  # Arquivo de entrada para o problema TSP
+  max_iterations: 100                   # Número máximo de iterações
+
+# Parâmetros do algoritmo ACO básico
+aco:
+  num_ants: 30                          # Número de formigas
+  alpha: 1.0                            # Importância do feromônio (maior = mais influência do feromônio)
+  beta: 2.0                             # Importância da heurística de distância (maior = mais influência da distância)
+  rho: 0.5                              # Taxa de evaporação do feromônio (0-1)
+  q: 1.0                                # Constante para atualização do feromônio
+  use_parallel: true                    # Usar processamento paralelo
+  num_processes: null                   # Número de processos (null = usar todos os cores disponíveis)
+
+# Parâmetros para o Max-Min Ant System (MMAS)
+mmas:
+  enabled: true                         # Usar MMAS em vez do ACO padrão
+  p_best: 0.05                          # Probabilidade para cálculo dos limites de feromônio
+  stagnation_limit: 10                  # Número de iterações sem melhoria antes de reiniciar feromônios
+
+# Parâmetros para otimização local
+k_opt:
+  enabled: true                         # Aplicar otimização local K-Opt
+  k_value: 2                            # Valor de K para K-Opt (2 = 2-opt, 3 = 3-opt, etc.)
+
+# Parâmetros para visualização
+visualization:
+  show_plots: true                      # Mostrar gráficos
+  save_plots: true                      # Salvar gráficos em arquivos
+  output_dir: "resultados/aco"          # Diretório para salvar resultados
+  show_progress: true                   # Mostrar barra de progresso durante execução
+  interactive: true                     # Usar visualizações interativas
+  update_interval: 5                    # Intervalo de atualização (em iterações) para visualização interativa
+
+# Parâmetros para otimização bayesiana
+bayesian_optimization:
+  enabled: false                        # Usar otimização bayesiana
+  n_calls: 20                           # Número de chamadas para otimização
+  n_random_starts: 5                    # Número de pontos iniciais aleatórios
+  verbose: true                         # Mostrar informações detalhadas
