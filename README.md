@@ -141,12 +141,12 @@ Assim como no GA, foi implementada a **Otimização Bayesiana** para o ACO, perm
 
 #### Como Usar a Otimização Bayesiana para ACO
 ```
-python "ACO + K-opt/ACO_main.py" --modo bayesiano --arquivo Djibouti.txt --chamadas 20 --inicios 5 --iteracoes_bo 50 --k_opt 2
+python "ACO + K-opt/ACO_main.py" --modo bayesiano --arquivo Qatar.txt --chamadas 20 --inicios 5 --iteracoes_bo 50 --k_opt 2
 ```
 
 Onde:
 - `--modo bayesiano`: Ativa a otimização bayesiana
-- `--arquivo Djibouti.txt`: Especifica o arquivo de entrada
+- `--arquivo Qatar.txt`: Especifica o arquivo de entrada
 - `--chamadas 20`: Define o número total de chamadas da otimização
 - `--inicios 5`: Define o número de pontos iniciais aleatórios
 - `--iteracoes_bo 50`: Define o número de iterações de ACO para cada teste
@@ -163,7 +163,7 @@ O processo de otimização:
 
 ### Como Executar o ACO Padrão
 ```
-python "ACO + K-opt/ACO_main.py" --modo padrao --arquivo Djibouti.txt --num_formigas 30 --alpha 0.8 --beta 0.8 --rho 0.9 --iteracoes 100 --k_opt 2
+python "ACO + K-opt/ACO_main.py" --modo padrao --arquivo Qatar.txt --num_formigas 30 --alpha 0.8 --beta 0.8 --rho 0.9 --iteracoes 100 --k_opt 2
 ```
 
 ## Comparação entre Algoritmos
@@ -193,7 +193,6 @@ O repositório inclui diversos conjuntos de dados do TSP, variando de problemas 
 - NumPy
 - Matplotlib
 - scikit-optimize (para otimização bayesiana)
-- Pandas (para análise de dados)
 - tqdm (para barras de progresso)
 
 ## Instalação
@@ -212,11 +211,3 @@ Os algoritmos foram testados em vários conjuntos de dados e comparados em termo
 - Convergência
 
 A otimização bayesiana melhorou significativamente o desempenho tanto do Algoritmo Genético quanto do ACO, encontrando automaticamente configurações de hiperparâmetros que resultam em melhores soluções com menos gerações ou iterações.
-
-## Trabalhos Futuros
-
-- Implementação de algoritmos híbridos combinando GA e ACO
-- Paralelização mais avançada usando GPU
-- Interface gráfica para visualização em tempo real
-- Suporte a problemas TSP com restrições adicionais
-- Implementação de outras metaheurísticas como Particle Swarm Optimization (PSO) e Simulated Annealing

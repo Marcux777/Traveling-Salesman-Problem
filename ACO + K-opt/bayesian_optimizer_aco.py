@@ -257,16 +257,22 @@ class BayesianOptimizerACO:
         plt.show()
 
         # Plota os objetivos para cada parâmetro
-        fig, ax = plt.subplots(2, 2, figsize=(15, 10))
-        plot_objective(self.results, dimensions=[
-                       'num_ants', 'alpha'], ax=ax[0, 0])
-        plot_objective(self.results, dimensions=['beta', 'rho'], ax=ax[0, 1])
-        plot_objective(self.results, dimensions=[
-                       'num_ants', 'beta'], ax=ax[1, 0])
-        plot_objective(self.results, dimensions=['alpha', 'rho'], ax=ax[1, 1])
+        try:
+            # Obtém os nomes das dimensões
+            dimension_names = [dim.name for dim in self.space]
 
-        plt.tight_layout()
-        plt.show()
+            # Plota as dimensões duas a duas
+            for i in range(len(dimension_names)):
+                for j in range(i+1, len(dimension_names)):
+                    plt.figure(figsize=(10, 6))
+                    plot_objective(self.results, dimensions=[i, j])
+                    plt.title(
+                        f"Otimização de {dimension_names[i]} vs {dimension_names[j]}")
+                    plt.tight_layout()
+                    plt.show()
+        except Exception as e:
+            print(f"Erro ao plotar objetivos: {e}")
+            print("Continuando com a execução...")
 
     def run_with_optimal_params(self) -> Tuple[List[int], float]:
         """
